@@ -59,7 +59,7 @@ async def leaderboard_prefix(ctx: lightbulb.Context) -> None:
 
     # Getting beatmap_id
     if ctx.options.link is None:
-        msg_ref = msg.message_reference
+        msg_ref = msg.referenced_message
         
         # Trying to fetch beatmap_id from reply
         if msg_ref is not None:
