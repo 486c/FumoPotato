@@ -17,7 +17,10 @@ class osuAPI:
         )
 
         r = await self.session.get(link)
-        #TODO check response code
+
+        if r.status != 200:
+            return None
+
         j = await r.json()
         if len(j) == 1:
             return j[0]

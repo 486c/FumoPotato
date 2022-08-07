@@ -87,11 +87,33 @@ async def leaderboard_prefix(ctx: lightbulb.Context) -> None:
 
     # Getting beatmap from osu!api
     b = await glob.osu.get_beatmaps(bid)
-    #TODO checks
+
+    if b is None:
+        await ctx.respond(
+            "Can't fetch beatmap from osu!api, please try again!",
+            reply=True
+        )
+        return
 
     # Getting country scores
-    #TODO checks
     r = await glob.osu.get(settings.SUPER_SECRET_API_LINK.format(bid))
+
+    # Check response status
+    if r.status != 200:
+        await ctx.respond(
+            "Something went wrong, please try again!",
+            reply=True
+        )
+        return
+
+    # Check content type
+    if r.headers['content-type'] == "text/html":
+        await ctx.respond(
+            "Something went wrong, please try again!",
+            reply=True
+        )
+        return
+
     scores_json = await r.json()
 
     view = CountryLeaderboard(scores_json['scores'], b)
