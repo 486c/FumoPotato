@@ -4,6 +4,7 @@ from typing import Optional
 
 import lightbulb
 from lightbulb import PrefixCommand, SlashCommand
+import hikari
 
 import glob
 import settings
@@ -24,7 +25,7 @@ def get_bid_from_url(url: str) -> Optional[int]:
     return None
 
 def get_bid_from_message(msg: hikari.Message) -> Optional[int]:
-    url = ""
+    url: str = ""
     
     # hardcoded but i dont care
     # owo#0498
@@ -53,7 +54,7 @@ def get_bid_from_message(msg: hikari.Message) -> Optional[int]:
 @lightbulb.command("lb", "Show country leaderboard")
 @lightbulb.implements(PrefixCommand)
 async def leaderboard_prefix(ctx: lightbulb.Context) -> None:
-    bid: int = None
+    bid: int = 0
 
     msg = ctx.event.message
 
