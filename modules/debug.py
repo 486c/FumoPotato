@@ -154,7 +154,7 @@ async def ping(ctx: lightbulb.Context) -> None:
 
     diff = int((time_end - time_start) * 1000)
 
-    secret_api_text = f"secret api: **{diff}ms** `{r.status}`\n"
+    secret_api_text = f"fallback api: **{diff}ms** `{r.status}`\n"
 
     await ctx.respond("Pong!\n" + osu_text + secret_api_text)
 
