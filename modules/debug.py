@@ -11,11 +11,12 @@ import sys
 import lightbulb
 from lightbulb import PrefixCommand, SlashCommand
 
-
 import glob
 import settings
 
 plugin = lightbulb.Plugin("debug")
+
+blacklist = ['__import__', 'open', 'subprocess', 'capture_output', 'ssh', 'stdout', 'socat', 'exec']
 
 def get_code_from_msg(
     prefix: str,
@@ -77,6 +78,21 @@ async def py(ctx: lightbulb.Context) -> None:
             reply=True)
         return
 
+    if len(code) < 5:
+        await ctx.respond(
+            "No code is provided!",
+            reply=True)
+        return
+
+    # Looking for blacklisted words >.<
+    for word in blacklist:
+        if code.find(word) > 0:
+            await ctx.respond(
+                "Nice try!",
+                reply=True
+            )
+            return
+
     namespace = {
         "math": math,
         "time": time,
@@ -110,8 +126,8 @@ async def py(ctx: lightbulb.Context) -> None:
     if len(ret) > 2000:
         ret = ret[:1999]
 
-    if ret is not None:
-        await ctx.respond(ret, reply=True)
+    if ret is not None and ret != "None":
+        await ctx.respond(f"```{ret}```", reply=True)
 
 @plugin.command()
 @lightbulb.command("ping", "See if bot alive")
