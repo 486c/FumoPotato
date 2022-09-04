@@ -16,6 +16,7 @@ import settings
 
 plugin = lightbulb.Plugin("debug")
 
+"""
 blacklist = ['__import__', 'open', 'subprocess', 'capture_output', 'ssh', 'stdout', 'socat', 'exec']
 
 def get_code_from_msg(
@@ -128,6 +129,8 @@ async def py(ctx: lightbulb.Context) -> None:
 
     if ret is not None and ret != "None":
         await ctx.respond(f"```{ret}```", reply=True)
+
+"""
 
 @plugin.command()
 @lightbulb.command("ping", "See if bot alive")
