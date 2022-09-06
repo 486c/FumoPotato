@@ -3,8 +3,11 @@ from __future__ import annotations
 from typing import Optional
 
 import lightbulb
-from lightbulb import PrefixCommand, SlashCommand
+from lightbulb import SlashCommand
+from lightbulb.checks import has_guild_permissions
+
 import hikari
+from hikari import Permissions
 
 import glob
 
@@ -13,6 +16,7 @@ from apscheduler.triggers.cron import CronTrigger
 plugin = lightbulb.Plugin("twitch")
 
 @plugin.command()
+@lightbulb.app_command_permissions(Permissions.MANAGE_NICKNAMES, dm_enabled=False)
 @lightbulb.option("name", "twitch username", str, required=True)
 @lightbulb.command("twitch_add", "Add new twitch channel to announcer")
 @lightbulb.implements(SlashCommand)
@@ -45,17 +49,23 @@ async def twitch_add(ctx: lightbulb.Context) -> None:
         f"`{twitch_name}` seccessfuly added to current channel!"
     )
 
-    #TODO not found
-
 @plugin.command()
-@lightbulb.option("name", "twitch username", str, required=True)
-@lightbulb.command("twitch_test", "Test")
+@lightbulb.app_command_permissions(dm_enabled=False)
+@lightbulb.command("twitch_list", "List all streamers on current channel")
 @lightbulb.implements(SlashCommand)
-async def twitch_test(ctx: lightbulb.Context) -> None:
-    s = await glob.twitch.get_stream(ctx.options.name)
-    print(s)
+async def twitch_list(ctx: lightbulb.Context) -> None:
+    c = glob.mongo['twitch']
+    response = "\n"
+    async for d in c.find({'channels': {'$in': [ctx.channel_id]}}):
+        response += f"{d['name']}\n"
+
+    if len(response) == 0:
+        await ctx.respond("Can't find streamers on current channel")
+    else:
+        await ctx.respond(f"```{response}```")
 
 @plugin.command()
+@lightbulb.app_command_permissions(Permissions.MANAGE_NICKNAMES, dm_enabled=False)
 @lightbulb.option("name", "twitch username", str, required=True)
 @lightbulb.command("twitch_remove", "Remove twitch channel from announcer")
 @lightbulb.implements(SlashCommand)
