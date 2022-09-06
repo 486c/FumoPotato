@@ -4,6 +4,8 @@ import miru
 import hikari
 from hikari import ButtonStyle
 
+from typing import Sequence
+
 from utils import get_emoji_from_rank
 
 from datetime import datetime
