@@ -110,7 +110,7 @@ async def global_check() -> None:
             )
             emb = hikari.Embed()
             emb.title = f"{d['name']} is online!"
-            emb.description = f"**json['title']'**"
+            emb.description = f"**{json['title']}**"
             emb.url = f"https://twitch.tv/{d['name']}"
             emb.color = hikari.Color(0x97158a)
             emb.set_image(f"https://static-cdn.jtvnw.net/previews-ttv/live_user_{d['name']}-1280x720.jpg")
