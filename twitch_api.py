@@ -21,6 +21,9 @@ class twitchAPI:
 
         r = await self.session.get(link, headers=headers)
 
+        if r.status != 200:
+            return None
+
         j = await r.json()
         if j['data'] == []:
             return None

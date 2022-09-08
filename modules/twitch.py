@@ -110,9 +110,15 @@ async def global_check() -> None:
             )
             emb = hikari.Embed()
             emb.title = f"{d['name']} is online!"
+            emb.description = f"**json['title']'**"
             emb.url = f"https://twitch.tv/{d['name']}"
             emb.color = hikari.Color(0x97158a)
             emb.set_image(f"https://static-cdn.jtvnw.net/previews-ttv/live_user_{d['name']}-1280x720.jpg")
+
+            emb.set_footer(
+                json['title'],
+                icon=f"https://static-cdn.jtvnw.net/ttv-boxart/{json['game_id']}-250x250.jpg"
+            )
 
             for channel_id in d['channels']:
                 await plugin.bot.rest.create_message(channel_id, embed=emb)
