@@ -116,7 +116,7 @@ async def global_check() -> None:
             emb.set_image(f"https://static-cdn.jtvnw.net/previews-ttv/live_user_{d['name']}-1280x720.jpg")
 
             emb.set_footer(
-                json['title'],
+                json['game_name'],
                 icon=f"https://static-cdn.jtvnw.net/ttv-boxart/{json['game_id']}-250x250.jpg"
             )
 
