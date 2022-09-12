@@ -49,6 +49,30 @@ async def twitch_add(ctx: lightbulb.Context) -> None:
         f"`{twitch_name}` seccessfuly added to current channel!"
     )
 
+
+@plugin.command()
+@lightbulb.app_command_permissions(dm_enabled=False)
+@lightbulb.option("name", "twitch username", str, required=True)
+@lightbulb.command("twitch_check", "Check if user added to current channel")
+@lightbulb.implements(SlashCommand)
+async def twitch_check(ctx: lightbulb.Context) -> None:
+    c = glob.mongo['twitch']
+
+    twitch_name = ctx.options.name
+    d = await c.find_one(
+            {"$and": 
+                [
+                    {"channels": {'$in': [ctx.channel_id]}},
+                    {"name": twitch_name}
+                ]
+            }
+    )
+    
+    if d is None:
+        await ctx.respond(f"Can't find `{twitch_name}` on current channel :c")
+    else:
+        await ctx.respond(f"Found `{twitch_name}` on current channel!")
+
 @plugin.command()
 @lightbulb.app_command_permissions(dm_enabled=False)
 @lightbulb.command("twitch_list", "List all streamers on current channel")
@@ -57,15 +81,15 @@ async def twitch_list(ctx: lightbulb.Context) -> None:
     c = glob.mongo['twitch']
     response = "\n"
     async for d in c.find({'channels': {'$in': [ctx.channel_id]}}):
-        response += f"{d['name']}\n"
+        response += f"\n{d['name']}"
 
     if len(response) == 0:
-        await ctx.respond("Can't find streamers on current channel")
+        await ctx.respond("Can't find any streamers on current channel")
     else:
         await ctx.respond(f"```{response}```")
 
 @plugin.command()
-@lightbulb.app_command_permissions(Permissions.MANAGE_NICKNAMES, dm_enabled=False)
+@lightbulb.app_command_permissions(Permissions.MANAGE_NICKNAMES, dm_enabled=False, bypass_checks=True)
 @lightbulb.option("name", "twitch username", str, required=True)
 @lightbulb.command("twitch_remove", "Remove twitch channel from announcer")
 @lightbulb.implements(SlashCommand)
@@ -77,15 +101,15 @@ async def twitch_remove(ctx: lightbulb.Context) -> None:
     )
 
     if s is None:
-        await ctx.respond(f"`{twitch_name}` is not found in current channel")
+        await ctx.respond(f"`{s['name]}` is not found in current channel")
         return
 
-    await glob.mongo['twitch'].update_one(
-        {'_id': s['_id']},
+    r = await glob.mongo['twitch'].update_one(
+        {'name': s['name']},
         {'$pull': { 'channels': ctx.channel_id}}
     )
 
-    await ctx.respond(f"`{twitch_name}` has been removed from current channel")
+    await ctx.respond(f"`{s['name']}` has been removed from current channel")
 
     pass
 
